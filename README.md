@@ -47,34 +47,33 @@ $client->messageLog(); // message history
 
 ### Sending Messages
 
-#### `messages()->send(campaignKey, channel, recipientAddress, options): array`
+#### `messages()->send(campaignKey, templateKey, recipientAddress, options): array`
 
-Send a message immediately. The Hub processes it asynchronously and returns a 202 response.
+Send a message immediately. The Hub processes it asynchronously and returns a 202 response. The channel is determined from the resolved template.
 
 ```php
 $response = $client->messages()->send(
     'welcome-email',        // campaign key
-    'email',                // channel: email, sms, push, call
+    'welcome_email_en',     // template key (unique within the campaign)
     'customer@example.com', // recipient address
     [
         'recipient_name' => 'Jane Doe',           // optional
         'recipient_ref'  => 'user-123',            // optional, for history lookups
         'data'           => ['name' => 'Jane'],    // optional, template variables
-        'locale'         => 'en',                  // optional, defaults to 'en' on server
         'metadata'       => ['source' => 'signup'],// optional, stored with the log entry
     ]
 );
 // $response: ['message' => 'Message dispatched.']
 ```
 
-#### `messages()->queue(campaignKey, channel, recipientAddress, scheduledAt, options): array`
+#### `messages()->queue(campaignKey, templateKey, recipientAddress, scheduledAt, options): array`
 
 Schedule a message for future delivery.
 
 ```php
 $response = $client->messages()->queue(
     'payment-reminder',
-    'sms',
+    'payment_reminder_sms_en',
     '+1234567890',
     '2026-03-15T10:00:00Z', // ISO 8601
     [
@@ -140,6 +139,7 @@ $template = $client->templates()->get(5);
 
 ```php
 $template = $client->templates()->create(1, [
+    'key'       => 'order_shipped_email_en',
     'channel'   => 'email',
     'locale'    => 'en',
     'subject'   => 'Your order has shipped!',
@@ -199,7 +199,7 @@ use MessagingHub\Sdk\Exceptions\AuthenticationException;
 use MessagingHub\Sdk\Exceptions\ValidationException;
 
 try {
-    $client->messages()->send('welcome-email', 'email', 'user@example.com');
+    $client->messages()->send('welcome-email', 'welcome_email_en', 'user@example.com');
 } catch (ValidationException $e) {
     // $e->getErrors(): ['recipient_address' => ['The recipient address field is required.']]
     foreach ($e->getErrors() as $field => $messages) {

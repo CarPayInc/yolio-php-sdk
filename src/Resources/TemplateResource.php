@@ -11,8 +11,8 @@ use MessagingHub\Sdk\Exceptions\ValidationException;
 /**
  * Resource class for managing templates via the Messaging Hub API.
  *
- * Templates define the content for a specific campaign, channel, and locale
- * combination (e.g. the English email template for the "welcome" campaign).
+ * Templates define the content for a campaign and are identified by a unique
+ * key within the campaign scope (e.g. "welcome_email_en").
  */
 class TemplateResource extends BaseResource
 {
@@ -41,6 +41,7 @@ class TemplateResource extends BaseResource
      *
      * @param int   $campaignId The campaign ID to create the template under
      * @param array $data       Template data including:
+     *                          - key (string): Unique template key within the campaign
      *                          - channel (string): The channel (email, sms, push, call)
      *                          - locale (string): The locale code (en, es)
      *                          - subject (string): Email subject line (email channel only)

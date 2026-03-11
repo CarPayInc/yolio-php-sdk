@@ -91,7 +91,7 @@ class MessagingHubClientTest extends TestCase
         ]);
         $resource = $this->createMessageResource($mock);
 
-        $result = $resource->send('welcome-email', 'email', 'user@example.com', [
+        $result = $resource->send('welcome-email', 'welcome_email_en', 'user@example.com', [
             'data' => ['name' => 'John'],
         ]);
 
@@ -120,7 +120,7 @@ class MessagingHubClientTest extends TestCase
 
         $result = $resource->queue(
             'payment-reminder',
-            'sms',
+            'payment_reminder_sms_en',
             '+1234567890',
             '2026-03-01T10:00:00Z',
             ['data' => ['amount' => '49.99']]
@@ -270,7 +270,7 @@ class MessagingHubClientTest extends TestCase
         $resource = $this->createMessageResource($mock);
 
         try {
-            $resource->send('', 'email', '');
+            $resource->send('', 'email_en', '');
             $this->fail('Expected ValidationException was not thrown.');
         } catch (ValidationException $e) {
             $this->assertSame(422, $e->getStatusCode());

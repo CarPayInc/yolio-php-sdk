@@ -20,17 +20,16 @@ class MessageResource extends BaseResource
      * Send a message immediately.
      *
      * The API dispatches the message asynchronously and returns 202 Accepted.
-     * The message is resolved against the campaign's template for the given
-     * channel and rendered with the provided data.
+     * The template is resolved by its unique key within the campaign, and the
+     * channel is determined from the resolved template.
      *
      * @param string $campaignKey      The unique campaign key identifying which message to send
-     * @param string $channel          The delivery channel (email, sms, push, call)
+     * @param string $templateKey      The unique template key within the campaign
      * @param string $recipientAddress The recipient's address (email address, phone number, etc.)
      * @param array  $options          Optional parameters:
      *                                 - recipient_name (string): Display name of the recipient
      *                                 - recipient_ref (string): Unique reference for the recipient (e.g. user ID)
      *                                 - data (array): Template placeholder values
-     *                                 - locale (string): Locale for template resolution (default: en)
      *                                 - metadata (array): Arbitrary metadata to store with the message log
      *
      * @return array The API response with message ID and status
@@ -39,11 +38,11 @@ class MessageResource extends BaseResource
      * @throws ValidationException     When the API returns 422 with validation errors
      * @throws ApiException            When the API returns an error
      */
-    public function send(string $campaignKey, string $channel, string $recipientAddress, array $options = []): array
+    public function send(string $campaignKey, string $templateKey, string $recipientAddress, array $options = []): array
     {
         $payload = array_merge($options, [
             'campaign_key'      => $campaignKey,
-            'channel'           => $channel,
+            'template_key'      => $templateKey,
             'recipient_address' => $recipientAddress,
         ]);
 
@@ -59,14 +58,13 @@ class MessageResource extends BaseResource
      * at the specified time by the server's queue processor.
      *
      * @param string $campaignKey      The unique campaign key identifying which message to send
-     * @param string $channel          The delivery channel (email, sms, push, call)
+     * @param string $templateKey      The unique template key within the campaign
      * @param string $recipientAddress The recipient's address (email address, phone number, etc.)
      * @param string $scheduledAt      ISO 8601 datetime when the message should be sent
      * @param array  $options          Optional parameters:
      *                                 - recipient_name (string): Display name of the recipient
      *                                 - recipient_ref (string): Unique reference for the recipient (e.g. user ID)
      *                                 - data (array): Template placeholder values
-     *                                 - locale (string): Locale for template resolution (default: en)
      *                                 - metadata (array): Arbitrary metadata to store with the message log
      *
      * @return array The API response with queued message ID, status, and scheduled time
@@ -77,14 +75,14 @@ class MessageResource extends BaseResource
      */
     public function queue(
         string $campaignKey,
-        string $channel,
+        string $templateKey,
         string $recipientAddress,
         string $scheduledAt,
         array $options = []
     ): array {
         $payload = array_merge($options, [
             'campaign_key'      => $campaignKey,
-            'channel'           => $channel,
+            'template_key'      => $templateKey,
             'recipient_address' => $recipientAddress,
             'scheduled_at'      => $scheduledAt,
         ]);
