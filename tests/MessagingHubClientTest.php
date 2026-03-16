@@ -14,6 +14,7 @@ use MessagingHub\Sdk\Exceptions\AuthenticationException;
 use MessagingHub\Sdk\Exceptions\ValidationException;
 use MessagingHub\Sdk\MessagingHubClient;
 use MessagingHub\Sdk\Resources\CampaignResource;
+use MessagingHub\Sdk\Resources\EmailSubscriptions;
 use MessagingHub\Sdk\Resources\MessageLogResource;
 use MessagingHub\Sdk\Resources\MessageResource;
 use MessagingHub\Sdk\Resources\TemplateResource;
@@ -309,6 +310,82 @@ class MessagingHubClientTest extends TestCase
     }
 
     /**
+     * Test that listing email subscriptions returns paginated data.
+     *
+     * @return void
+     */
+    public function testListEmailSubscriptionsReturnsPaginatedData(): void
+    {
+        $responseBody = [
+            'current_page' => 1,
+            'data'         => [
+                ['id' => 1, 'email' => 'user@example.com', 'categories' => ['promotional']],
+            ],
+            'total'    => 1,
+            'per_page' => 25,
+        ];
+
+        $mock    = new MockHandler([
+            new Response(200, [], json_encode($responseBody)),
+        ]);
+        $resource = $this->createEmailSubscriptionsResource($mock);
+
+        $result = $resource->list(['per_page' => 10]);
+
+        $this->assertArrayHasKey('data', $result);
+        $this->assertCount(1, $result['data']);
+        $this->assertSame('user@example.com', $result['data'][0]['email']);
+    }
+
+    /**
+     * Test that checking email subscription returns status.
+     *
+     * @return void
+     */
+    public function testCheckEmailSubscriptionReturnsStatus(): void
+    {
+        $responseBody = [
+            'email'                => 'user@example.com',
+            'opted_out_categories' => ['promotional'],
+            'is_fully_opted_out'   => false,
+        ];
+
+        $mock    = new MockHandler([
+            new Response(200, [], json_encode($responseBody)),
+        ]);
+        $resource = $this->createEmailSubscriptionsResource($mock);
+
+        $result = $resource->check('user@example.com');
+
+        $this->assertSame('user@example.com', $result['email']);
+        $this->assertSame(['promotional'], $result['opted_out_categories']);
+        $this->assertFalse($result['is_fully_opted_out']);
+    }
+
+    /**
+     * Create an EmailSubscriptions resource with a mocked Guzzle client.
+     *
+     * @param MockHandler $mock The mock handler pre-loaded with responses
+     *
+     * @return EmailSubscriptions
+     */
+    private function createEmailSubscriptionsResource(MockHandler $mock): EmailSubscriptions
+    {
+        $handlerStack = HandlerStack::create($mock);
+        $client       = new Client([
+            'handler'  => $handlerStack,
+            'base_uri' => 'https://hub.example.com/',
+            'headers'  => [
+                'Authorization' => 'Bearer test-api-key',
+                'Accept'        => 'application/json',
+                'Content-Type'  => 'application/json',
+            ],
+        ]);
+
+        return new EmailSubscriptions($client);
+    }
+
+    /**
      * Test that the static factory creates a functional client instance.
      *
      * @return void
@@ -322,5 +399,6 @@ class MessagingHubClientTest extends TestCase
         $this->assertInstanceOf(TemplateResource::class, $client->templates());
         $this->assertInstanceOf(MessageResource::class, $client->messages());
         $this->assertInstanceOf(MessageLogResource::class, $client->messageLog());
+        $this->assertInstanceOf(EmailSubscriptions::class, $client->emailSubscriptions());
     }
 }

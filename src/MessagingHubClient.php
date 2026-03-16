@@ -7,6 +7,7 @@ namespace MessagingHub\Sdk;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use MessagingHub\Sdk\Resources\CampaignResource;
+use MessagingHub\Sdk\Resources\EmailSubscriptions;
 use MessagingHub\Sdk\Resources\MessageLogResource;
 use MessagingHub\Sdk\Resources\MessageResource;
 use MessagingHub\Sdk\Resources\TemplateResource;
@@ -40,6 +41,9 @@ class MessagingHubClient
 
     /** @var MessageLogResource|null Lazily instantiated message log resource */
     private ?MessageLogResource $messageLogResource = null;
+
+    /** @var EmailSubscriptions|null Lazily instantiated email subscriptions resource */
+    private ?EmailSubscriptions $emailSubscriptionsResource = null;
 
     /**
      * Create a new Messaging Hub client.
@@ -126,5 +130,19 @@ class MessagingHubClient
         }
 
         return $this->messageLogResource;
+    }
+
+    /**
+     * Get the email subscriptions resource for checking opt-out status.
+     *
+     * @return EmailSubscriptions
+     */
+    public function emailSubscriptions(): EmailSubscriptions
+    {
+        if ($this->emailSubscriptionsResource === null) {
+            $this->emailSubscriptionsResource = new EmailSubscriptions($this->httpClient);
+        }
+
+        return $this->emailSubscriptionsResource;
     }
 }
