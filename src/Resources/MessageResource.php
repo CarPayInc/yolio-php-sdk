@@ -31,6 +31,7 @@ class MessageResource extends BaseResource
      *                                 - recipient_ref (string): Unique reference for the recipient (e.g. user ID)
      *                                 - data (array): Template placeholder values
      *                                 - metadata (array): Arbitrary metadata to store with the message log
+     *                                 - from (string): SMS sender phone number (E.164) or label. Required when tenant has multi-number SMS enabled.
      *
      * @return array The API response with message ID and status
      *
@@ -66,6 +67,7 @@ class MessageResource extends BaseResource
      *                                 - recipient_ref (string): Unique reference for the recipient (e.g. user ID)
      *                                 - data (array): Template placeholder values
      *                                 - metadata (array): Arbitrary metadata to store with the message log
+     *                                 - from (string): SMS sender phone number (E.164) or label. Required when tenant has multi-number SMS enabled.
      *
      * @return array The API response with queued message ID, status, and scheduled time
      *
