@@ -46,7 +46,6 @@ class TemplateResource extends BaseResource
      *                          - locale (string): The locale code (en, es)
      *                          - subject (string): Email subject line (email channel only)
      *                          - body (string): Template body content
-     *                          - blade_template (string): Blade template path (email channel only)
      *
      * @return array The created template data
      *
