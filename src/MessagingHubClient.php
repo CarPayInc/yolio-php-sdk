@@ -10,6 +10,7 @@ use MessagingHub\Sdk\Resources\CampaignResource;
 use MessagingHub\Sdk\Resources\EmailSubscriptions;
 use MessagingHub\Sdk\Resources\MessageLogResource;
 use MessagingHub\Sdk\Resources\MessageResource;
+use MessagingHub\Sdk\Resources\PartialResource;
 use MessagingHub\Sdk\Resources\TemplateResource;
 
 /**
@@ -41,6 +42,9 @@ class MessagingHubClient
 
     /** @var MessageLogResource|null Lazily instantiated message log resource */
     private ?MessageLogResource $messageLogResource = null;
+
+    /** @var PartialResource|null Lazily instantiated partial resource */
+    private ?PartialResource $partialResource = null;
 
     /** @var EmailSubscriptions|null Lazily instantiated email subscriptions resource */
     private ?EmailSubscriptions $emailSubscriptionsResource = null;
@@ -102,6 +106,20 @@ class MessagingHubClient
         }
 
         return $this->templateResource;
+    }
+
+    /**
+     * Get the partials resource for managing template partials.
+     *
+     * @return PartialResource
+     */
+    public function partials(): PartialResource
+    {
+        if ($this->partialResource === null) {
+            $this->partialResource = new PartialResource($this->httpClient);
+        }
+
+        return $this->partialResource;
     }
 
     /**
