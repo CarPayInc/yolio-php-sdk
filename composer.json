@@ -2,7 +2,7 @@
     "name": "messaging-hub/sdk",
     "description": "PHP SDK for the Messaging Hub API",
     "license": "proprietary",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "type": "library",
     "require": {
         "php": ">=7.4",
