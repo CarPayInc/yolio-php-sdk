@@ -220,7 +220,7 @@ $template = $client->templates()->create(1, [
     'channel'   => 'email',
     'locale'    => 'en',
     'subject'   => 'Your order has shipped!',
-    'body'      => '<h1>Hi {{name}}</h1><p>Your order #{{order_id}} is on its way.</p>',
+    'body'      => '<h1>Hi [[name]]</h1><p>Your order #[[order_id]] is on its way.</p>',
     'is_active' => true,
 ]);
 ```
