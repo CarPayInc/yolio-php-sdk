@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace MessagingHub\Sdk;
+namespace Yolio\Sdk;
 
 /**
- * Configuration value object for the Messaging Hub API client.
+ * Configuration value object for the Yolio API client.
  *
  * Holds the base URL, API key, and timeout settings required
- * to communicate with the Messaging Hub API.
+ * to communicate with the Yolio API.
  */
 class ClientConfig
 {
-    /** @var string The base URL of the Messaging Hub API (e.g. https://hub.example.com) */
+    /** @var string The base URL of the Yolio API (e.g. https://hub.example.com) */
     private string $baseUrl;
 
     /** @var string The Bearer token used to authenticate API requests */
@@ -24,7 +24,7 @@ class ClientConfig
     /**
      * Create a new client configuration.
      *
-     * @param string $baseUrl The base URL of the Messaging Hub API (no trailing slash)
+     * @param string $baseUrl The base URL of the Yolio API (no trailing slash)
      * @param string $apiKey  The API key (Bearer token) for authentication
      * @param int    $timeout HTTP request timeout in seconds (default: 30)
      */
@@ -36,7 +36,7 @@ class ClientConfig
     }
 
     /**
-     * Get the base URL of the Messaging Hub API.
+     * Get the base URL of the Yolio API.
      *
      * @return string
      */

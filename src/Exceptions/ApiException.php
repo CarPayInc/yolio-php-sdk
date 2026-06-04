@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace MessagingHub\Sdk\Exceptions;
+namespace Yolio\Sdk\Exceptions;
 
 use RuntimeException;
 use Throwable;
 
 /**
- * Base exception for all Messaging Hub API errors.
+ * Base exception for all Yolio API errors.
  *
  * Wraps HTTP error responses and connection failures into a single
  * exception type that callers can catch and inspect.

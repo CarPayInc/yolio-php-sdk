@@ -2,31 +2,31 @@
 
 declare(strict_types=1);
 
-namespace MessagingHub\Sdk;
+namespace Yolio\Sdk;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use MessagingHub\Sdk\Resources\CampaignResource;
-use MessagingHub\Sdk\Resources\EmailSubscriptions;
-use MessagingHub\Sdk\Resources\MessageLogResource;
-use MessagingHub\Sdk\Resources\MessageResource;
-use MessagingHub\Sdk\Resources\PartialResource;
-use MessagingHub\Sdk\Resources\TemplateResource;
+use Yolio\Sdk\Resources\CampaignResource;
+use Yolio\Sdk\Resources\EmailSubscriptions;
+use Yolio\Sdk\Resources\MessageLogResource;
+use Yolio\Sdk\Resources\MessageResource;
+use Yolio\Sdk\Resources\PartialResource;
+use Yolio\Sdk\Resources\TemplateResource;
 
 /**
- * Main entry point for the Messaging Hub PHP SDK.
+ * Main entry point for the Yolio PHP SDK.
  *
  * Provides access to all API resource classes for managing campaigns,
  * templates, messages, and message history. Handles Guzzle client
  * configuration and authentication header injection.
  *
  * Usage:
- *   $client = MessagingHubClient::create('https://hub.example.com', 'your-api-key');
+ *   $client = YolioClient::create('https://hub.example.com', 'your-api-key');
  *   $client->messages()->send('welcome-email', 'email', 'user@example.com', [
  *       'data' => ['name' => 'John'],
  *   ]);
  */
-class MessagingHubClient
+class YolioClient
 {
     /** @var ClientInterface The configured Guzzle HTTP client */
     private ClientInterface $httpClient;
@@ -50,7 +50,7 @@ class MessagingHubClient
     private ?EmailSubscriptions $emailSubscriptionsResource = null;
 
     /**
-     * Create a new Messaging Hub client.
+     * Create a new Yolio client.
      *
      * @param ClientConfig $config The client configuration with base URL, API key, and timeout
      */
@@ -70,7 +70,7 @@ class MessagingHubClient
     /**
      * Static factory method for quick client creation.
      *
-     * @param string $baseUrl The base URL of the Messaging Hub API
+     * @param string $baseUrl The base URL of the Yolio API
      * @param string $apiKey  The API key for authentication
      *
      * @return self A configured client instance

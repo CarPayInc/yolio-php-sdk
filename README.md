@@ -1,6 +1,6 @@
-# messaging-hub/sdk
+# yolio/sdk
 
-PHP SDK for the Messaging Hub API. Provides a fluent, resource-based client for sending messages, managing campaigns, templates, and partials, querying message history, and checking email subscription status.
+PHP SDK for the Yolio API. Provides a fluent, resource-based client for sending messages, managing campaigns, templates, and partials, querying message history, and checking email subscription status.
 
 ## Requirements
 
@@ -10,15 +10,15 @@ PHP SDK for the Messaging Hub API. Provides a fluent, resource-based client for 
 ## Installation
 
 ```bash
-composer require messaging-hub/sdk
+composer require yolio/sdk
 ```
 
 ## Quick Start
 
 ```php
-use MessagingHub\Sdk\MessagingHubClient;
+use Yolio\Sdk\YolioClient;
 
-$client = MessagingHubClient::create(
+$client = YolioClient::create(
     'https://hub.example.com/api/v1',
     'your-api-key'
 );
@@ -37,7 +37,7 @@ $client->messages()->send(
 ### Static Factory (Recommended)
 
 ```php
-$client = MessagingHubClient::create(
+$client = YolioClient::create(
     'https://hub.example.com/api/v1',
     'your-api-key'
 );
@@ -46,15 +46,15 @@ $client = MessagingHubClient::create(
 ### Custom Timeout
 
 ```php
-use MessagingHub\Sdk\ClientConfig;
-use MessagingHub\Sdk\MessagingHubClient;
+use Yolio\Sdk\ClientConfig;
+use Yolio\Sdk\YolioClient;
 
 $config = new ClientConfig(
     'https://hub.example.com/api/v1',
     'your-api-key',
     60 // timeout in seconds (default: 30)
 );
-$client = new MessagingHubClient($config);
+$client = new YolioClient($config);
 ```
 
 ## Resources
@@ -363,9 +363,9 @@ All methods throw typed exceptions on failure:
 `getStatusCode()` returns `null` for network/connection errors (non-HTTP failures).
 
 ```php
-use MessagingHub\Sdk\Exceptions\ApiException;
-use MessagingHub\Sdk\Exceptions\AuthenticationException;
-use MessagingHub\Sdk\Exceptions\ValidationException;
+use Yolio\Sdk\Exceptions\ApiException;
+use Yolio\Sdk\Exceptions\AuthenticationException;
+use Yolio\Sdk\Exceptions\ValidationException;
 
 try {
     $client->messages()->send('welcome-email', 'welcome_email_en', 'user@example.com');
@@ -392,7 +392,7 @@ composer install
 vendor/bin/phpunit
 ```
 
-When running inside the Messaging Hub Docker stack:
+When running inside the Yolio Docker stack:
 
 ```bash
 docker compose exec -T -w /var/www/html/sdks/php app vendor/bin/phpunit

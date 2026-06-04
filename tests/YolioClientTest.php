@@ -2,31 +2,31 @@
 
 declare(strict_types=1);
 
-namespace MessagingHub\Sdk\Tests;
+namespace Yolio\Sdk\Tests;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use MessagingHub\Sdk\ClientConfig;
-use MessagingHub\Sdk\Exceptions\ApiException;
-use MessagingHub\Sdk\Exceptions\AuthenticationException;
-use MessagingHub\Sdk\Exceptions\ValidationException;
-use MessagingHub\Sdk\MessagingHubClient;
-use MessagingHub\Sdk\Resources\CampaignResource;
-use MessagingHub\Sdk\Resources\EmailSubscriptions;
-use MessagingHub\Sdk\Resources\MessageLogResource;
-use MessagingHub\Sdk\Resources\MessageResource;
-use MessagingHub\Sdk\Resources\TemplateResource;
+use Yolio\Sdk\ClientConfig;
+use Yolio\Sdk\Exceptions\ApiException;
+use Yolio\Sdk\Exceptions\AuthenticationException;
+use Yolio\Sdk\Exceptions\ValidationException;
+use Yolio\Sdk\YolioClient;
+use Yolio\Sdk\Resources\CampaignResource;
+use Yolio\Sdk\Resources\EmailSubscriptions;
+use Yolio\Sdk\Resources\MessageLogResource;
+use Yolio\Sdk\Resources\MessageResource;
+use Yolio\Sdk\Resources\TemplateResource;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Test suite for the Messaging Hub PHP SDK.
+ * Test suite for the Yolio PHP SDK.
  *
  * Uses Guzzle's MockHandler to simulate API responses and verify
  * that the SDK correctly handles success and error scenarios.
  */
-class MessagingHubClientTest extends TestCase
+class YolioClientTest extends TestCase
 {
     /**
      * Create a MessageResource with a mocked Guzzle client.
@@ -392,9 +392,9 @@ class MessagingHubClientTest extends TestCase
      */
     public function testStaticFactoryCreatesClient(): void
     {
-        $client = MessagingHubClient::create('https://hub.example.com', 'test-key');
+        $client = YolioClient::create('https://hub.example.com', 'test-key');
 
-        $this->assertInstanceOf(MessagingHubClient::class, $client);
+        $this->assertInstanceOf(YolioClient::class, $client);
         $this->assertInstanceOf(CampaignResource::class, $client->campaigns());
         $this->assertInstanceOf(TemplateResource::class, $client->templates());
         $this->assertInstanceOf(MessageResource::class, $client->messages());

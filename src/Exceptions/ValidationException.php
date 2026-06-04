@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MessagingHub\Sdk\Exceptions;
+namespace Yolio\Sdk\Exceptions;
 
 use Throwable;
 

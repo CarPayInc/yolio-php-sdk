@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace MessagingHub\Sdk\Resources;
+namespace Yolio\Sdk\Resources;
 
-use MessagingHub\Sdk\Exceptions\ApiException;
-use MessagingHub\Sdk\Exceptions\AuthenticationException;
-use MessagingHub\Sdk\Exceptions\ValidationException;
+use Yolio\Sdk\Exceptions\ApiException;
+use Yolio\Sdk\Exceptions\AuthenticationException;
+use Yolio\Sdk\Exceptions\ValidationException;
 
 /**
- * Resource class for sending and queuing messages via the Messaging Hub API.
+ * Resource class for sending and queuing messages via the Yolio API.
  *
  * Provides methods to dispatch messages immediately (async on the server side)
  * or schedule them for deferred delivery via the message queue.

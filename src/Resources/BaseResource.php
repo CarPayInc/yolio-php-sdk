@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace MessagingHub\Sdk\Resources;
+namespace Yolio\Sdk\Resources;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
-use MessagingHub\Sdk\Exceptions\ApiException;
-use MessagingHub\Sdk\Exceptions\AuthenticationException;
-use MessagingHub\Sdk\Exceptions\ValidationException;
+use Yolio\Sdk\Exceptions\ApiException;
+use Yolio\Sdk\Exceptions\AuthenticationException;
+use Yolio\Sdk\Exceptions\ValidationException;
 
 /**
  * Base class for all API resource classes.

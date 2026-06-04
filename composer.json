@@ -1,6 +1,6 @@
 {
-    "name": "messaging-hub/sdk",
-    "description": "PHP SDK for the Messaging Hub API",
+    "name": "yolio/sdk",
+    "description": "PHP SDK for the Yolio API",
     "license": "proprietary",
     "version": "1.0.0",
     "type": "library",
@@ -13,12 +13,12 @@
     },
     "autoload": {
         "psr-4": {
-            "MessagingHub\\Sdk\\": "src/"
+            "Yolio\\Sdk\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MessagingHub\\Sdk\\Tests\\": "tests/"
+            "Yolio\\Sdk\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "stable",

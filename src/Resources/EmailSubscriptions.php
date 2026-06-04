@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace MessagingHub\Sdk\Resources;
+namespace Yolio\Sdk\Resources;
 
-use MessagingHub\Sdk\Exceptions\ApiException;
-use MessagingHub\Sdk\Exceptions\AuthenticationException;
-use MessagingHub\Sdk\Exceptions\ValidationException;
+use Yolio\Sdk\Exceptions\ApiException;
+use Yolio\Sdk\Exceptions\AuthenticationException;
+use Yolio\Sdk\Exceptions\ValidationException;
 
 /**
- * Resource class for checking email subscription status via the Messaging Hub API.
+ * Resource class for checking email subscription status via the Yolio API.
  *
  * Provides read-only access to email opt-out preferences, allowing
  * retrieval of all unsubscriptions and single email lookups.

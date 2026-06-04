@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace MessagingHub\Sdk\Resources;
+namespace Yolio\Sdk\Resources;
 
-use MessagingHub\Sdk\Exceptions\ApiException;
-use MessagingHub\Sdk\Exceptions\AuthenticationException;
+use Yolio\Sdk\Exceptions\ApiException;
+use Yolio\Sdk\Exceptions\AuthenticationException;
 
 /**
- * Resource class for querying message history via the Messaging Hub API.
+ * Resource class for querying message history via the Yolio API.
  *
  * Provides read-only access to the message log, allowing retrieval of
  * sent messages by various criteria and per-recipient history lookups.

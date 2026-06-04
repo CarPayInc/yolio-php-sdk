@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace MessagingHub\Sdk\Resources;
+namespace Yolio\Sdk\Resources;
 
-use MessagingHub\Sdk\Exceptions\ApiException;
-use MessagingHub\Sdk\Exceptions\AuthenticationException;
-use MessagingHub\Sdk\Exceptions\ValidationException;
+use Yolio\Sdk\Exceptions\ApiException;
+use Yolio\Sdk\Exceptions\AuthenticationException;
+use Yolio\Sdk\Exceptions\ValidationException;
 
 /**
- * Resource class for managing campaigns via the Messaging Hub API.
+ * Resource class for managing campaigns via the Yolio API.
  *
  * Provides CRUD operations for campaigns, which are the central unit
  * defining what gets sent, via which channels, and to whom.

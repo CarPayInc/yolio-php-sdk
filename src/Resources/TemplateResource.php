@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace MessagingHub\Sdk\Resources;
+namespace Yolio\Sdk\Resources;
 
-use MessagingHub\Sdk\Exceptions\ApiException;
-use MessagingHub\Sdk\Exceptions\AuthenticationException;
-use MessagingHub\Sdk\Exceptions\ValidationException;
+use Yolio\Sdk\Exceptions\ApiException;
+use Yolio\Sdk\Exceptions\AuthenticationException;
+use Yolio\Sdk\Exceptions\ValidationException;
 
 /**
- * Resource class for managing templates via the Messaging Hub API.
+ * Resource class for managing templates via the Yolio API.
  *
  * Templates define the content for a campaign and are identified by a unique
  * key within the campaign scope (e.g. "welcome_email_en").
