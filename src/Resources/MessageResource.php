@@ -32,6 +32,11 @@ class MessageResource extends BaseResource
      *                                 - data (array): Template placeholder values
      *                                 - metadata (array): Arbitrary metadata to store with the message log
      *                                 - from (string): SMS sender phone number (E.164) or label. Required when tenant has multi-number SMS enabled.
+     *                                 - from_email (string): Per-message sender email (email channel). Must be an approved sender domain.
+     *                                 - from_name (string): Per-message sender display name (email channel)
+     *                                 - reply_to_email (string): Per-message reply-to email (email channel)
+     *                                 - reply_to_name (string): Per-message reply-to display name (email channel)
+     *                                 - attachments (array): List of ['filename' => string, 'content' => base64 string, 'content_type' => string]
      *
      * @return array The API response with message ID and status
      *
@@ -68,6 +73,11 @@ class MessageResource extends BaseResource
      *                                 - data (array): Template placeholder values
      *                                 - metadata (array): Arbitrary metadata to store with the message log
      *                                 - from (string): SMS sender phone number (E.164) or label. Required when tenant has multi-number SMS enabled.
+     *                                 - from_email (string): Per-message sender email (email channel). Must be an approved sender domain.
+     *                                 - from_name (string): Per-message sender display name (email channel)
+     *                                 - reply_to_email (string): Per-message reply-to email (email channel)
+     *                                 - reply_to_name (string): Per-message reply-to display name (email channel)
+     *                                 - attachments (array): List of ['filename' => string, 'content' => base64 string, 'content_type' => string]
      *
      * @return array The API response with queued message ID, status, and scheduled time
      *
@@ -91,6 +101,54 @@ class MessageResource extends BaseResource
 
         return $this->request('POST', 'api/v1/queue', [
             'json' => $payload,
+        ]);
+    }
+
+    /**
+     * Send a batch of messages immediately.
+     *
+     * Each message is an associative array with the same keys accepted by
+     * send() as a flat payload: campaign_key, template_key, recipient_address,
+     * and any of the optional fields (data, metadata, from, from_email,
+     * from_name, reply_to_email, reply_to_name, attachments). The API validates
+     * and dispatches each item independently and returns HTTP 207 with a
+     * per-item results array.
+     *
+     * @param array $messages A list of message payload arrays (max 100)
+     *
+     * @return array The API response with accepted/rejected counts and per-item results
+     *
+     * @throws AuthenticationException When the API returns 401 Unauthorized
+     * @throws ValidationException     When the API returns 422 (envelope or budget invalid)
+     * @throws ApiException            When the API returns an error
+     */
+    public function sendBatch(array $messages): array
+    {
+        return $this->request('POST', 'api/v1/send/batch', [
+            'json' => ['messages' => $messages],
+        ]);
+    }
+
+    /**
+     * Queue a batch of messages for scheduled delivery.
+     *
+     * Each message is an associative array with the same keys accepted by
+     * queue() as a flat payload, including a per-item scheduled_at. The API
+     * validates and queues each item independently and returns HTTP 207 with a
+     * per-item results array (including the queue ID for each accepted item).
+     *
+     * @param array $messages A list of message payload arrays (max 100), each with scheduled_at
+     *
+     * @return array The API response with accepted/rejected counts and per-item results
+     *
+     * @throws AuthenticationException When the API returns 401 Unauthorized
+     * @throws ValidationException     When the API returns 422 (envelope or budget invalid)
+     * @throws ApiException            When the API returns an error
+     */
+    public function queueBatch(array $messages): array
+    {
+        return $this->request('POST', 'api/v1/queue/batch', [
+            'json' => ['messages' => $messages],
         ]);
     }
 }

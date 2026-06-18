@@ -52,6 +52,51 @@ class YolioClientTest extends TestCase
     }
 
     /**
+     * Create a MessageLogResource with a mocked Guzzle client.
+     *
+     * @param MockHandler $mock The mock handler pre-loaded with responses
+     *
+     * @return MessageLogResource
+     */
+    private function createMessageLogResource(MockHandler $mock): MessageLogResource
+    {
+        $handlerStack = HandlerStack::create($mock);
+        $client       = new Client([
+            'handler'  => $handlerStack,
+            'base_uri' => 'https://hub.example.com/',
+            'headers'  => [
+                'Authorization' => 'Bearer test-api-key',
+                'Accept'        => 'application/json',
+                'Content-Type'  => 'application/json',
+            ],
+        ]);
+
+        return new MessageLogResource($client);
+    }
+
+    /**
+     * Test that find() looks up a message by its ID.
+     *
+     * @return void
+     */
+    public function testFindMessageReturnsMessage(): void
+    {
+        $mock     = new MockHandler([
+            new Response(200, [], json_encode([
+                'message_id' => '01JZ8K9F3QG7N2R5T8V0W1X2Y3',
+                'status'     => 'delivered',
+            ])),
+        ]);
+        $resource = $this->createMessageLogResource($mock);
+
+        $result = $resource->find('01JZ8K9F3QG7N2R5T8V0W1X2Y3');
+
+        $this->assertSame('01JZ8K9F3QG7N2R5T8V0W1X2Y3', $result['message_id']);
+        $this->assertSame('delivered', $result['status']);
+        $this->assertSame('/api/v1/messages/01JZ8K9F3QG7N2R5T8V0W1X2Y3', $mock->getLastRequest()->getUri()->getPath());
+    }
+
+    /**
      * Create a CampaignResource with a mocked Guzzle client.
      *
      * @param MockHandler $mock The mock handler pre-loaded with responses
@@ -131,6 +176,103 @@ class YolioClientTest extends TestCase
         $this->assertSame(99, $result['id']);
         $this->assertSame('scheduled', $result['status']);
         $this->assertSame('2026-03-01T10:00:00Z', $result['scheduled_at']);
+    }
+
+    /**
+     * Test that send forwards email sender options and attachments in the payload.
+     *
+     * @return void
+     */
+    public function testSendForwardsEmailOptionsInPayload(): void
+    {
+        $mock     = new MockHandler([
+            new Response(202, [], json_encode(['message' => 'queued'])),
+        ]);
+        $resource = $this->createMessageResource($mock);
+
+        $resource->send('welcome-email', 'welcome_email_en', 'user@example.com', [
+            'from_email'     => 'noreply@carpay.com',
+            'from_name'      => 'Carpay',
+            'reply_to_email' => 'support@carpay.com',
+            'attachments'    => [
+                ['filename' => 'invoice.pdf', 'content' => base64_encode('%PDF-1.4 body')],
+            ],
+        ]);
+
+        $sent = json_decode((string) $mock->getLastRequest()->getBody(), true);
+
+        $this->assertSame('noreply@carpay.com', $sent['from_email']);
+        $this->assertSame('Carpay', $sent['from_name']);
+        $this->assertSame('support@carpay.com', $sent['reply_to_email']);
+        $this->assertSame('invoice.pdf', $sent['attachments'][0]['filename']);
+    }
+
+    /**
+     * Test that sendBatch posts a messages envelope and returns per-item results.
+     *
+     * @return void
+     */
+    public function testSendBatchReturnsResults(): void
+    {
+        $responseBody = [
+            'accepted' => 1,
+            'rejected' => 1,
+            'results'  => [
+                ['index' => 0, 'status' => 'queued'],
+                ['index' => 1, 'status' => 'rejected', 'error' => 'Campaign [x] not found or inactive'],
+            ],
+        ];
+
+        $mock     = new MockHandler([
+            new Response(207, [], json_encode($responseBody)),
+        ]);
+        $resource = $this->createMessageResource($mock);
+
+        $result = $resource->sendBatch([
+            ['campaign_key' => 'welcome', 'template_key' => 'welcome_email_en', 'recipient_address' => 'a@example.com'],
+            ['campaign_key' => 'x', 'template_key' => 'welcome_email_en', 'recipient_address' => 'b@example.com'],
+        ]);
+
+        $this->assertSame(1, $result['accepted']);
+        $this->assertSame(1, $result['rejected']);
+        $this->assertSame('queued', $result['results'][0]['status']);
+
+        $request = $mock->getLastRequest();
+        $this->assertSame('/api/v1/send/batch', $request->getUri()->getPath());
+        $sent = json_decode((string) $request->getBody(), true);
+        $this->assertCount(2, $sent['messages']);
+    }
+
+    /**
+     * Test that queueBatch posts to the queue batch endpoint.
+     *
+     * @return void
+     */
+    public function testQueueBatchReturnsResults(): void
+    {
+        $responseBody = [
+            'accepted' => 1,
+            'rejected' => 0,
+            'results'  => [['index' => 0, 'status' => 'queued', 'id' => 5]],
+        ];
+
+        $mock     = new MockHandler([
+            new Response(207, [], json_encode($responseBody)),
+        ]);
+        $resource = $this->createMessageResource($mock);
+
+        $result = $resource->queueBatch([
+            [
+                'campaign_key'      => 'welcome',
+                'template_key'      => 'welcome_email_en',
+                'recipient_address' => 'a@example.com',
+                'scheduled_at'      => '2099-01-01T00:00:00Z',
+            ],
+        ]);
+
+        $this->assertSame(1, $result['accepted']);
+        $this->assertSame(5, $result['results'][0]['id']);
+        $this->assertSame('/api/v1/queue/batch', $mock->getLastRequest()->getUri()->getPath());
     }
 
     /**

@@ -23,6 +23,8 @@ class MessageLogResource extends BaseResource
      *                      - channel (string): Filter by channel (email, sms, push, call)
      *                      - status (string): Filter by delivery status
      *                      - recipient_address (string): Filter by recipient address
+     *                      - start_date (string): Lower bound (inclusive) of the created_at window — bare date (YYYY-MM-DD) or ISO 8601 datetime, resolved in the tenant timezone
+     *                      - end_date (string): Upper bound of the created_at window — a bare date is inclusive of the whole day
      *                      - per_page (int): Number of results per page
      *
      * @return array Paginated list of message log entries
@@ -45,6 +47,8 @@ class MessageLogResource extends BaseResource
      *
      * @param string $ref    The unique recipient reference to look up
      * @param array  $params Optional query parameters:
+     *                       - start_date (string): Lower bound (inclusive) of the created_at window — bare date (YYYY-MM-DD) or ISO 8601 datetime, resolved in the tenant timezone
+     *                       - end_date (string): Upper bound of the created_at window — a bare date is inclusive of the whole day
      *                       - per_page (int): Number of results per page
      *
      * @return array Paginated list of messages sent to the recipient
@@ -57,5 +61,25 @@ class MessageLogResource extends BaseResource
         return $this->request('GET', "api/v1/messages/recipient/{$ref}", [
             'query' => $params,
         ]);
+    }
+
+    /**
+     * Look up a single message by its unique message ID.
+     *
+     * Accepts the `message_id` (ULID) returned from send() or queue(). A
+     * dispatched message resolves to its log entry; a still-scheduled message
+     * resolves to its queued representation (status "scheduled"/"processing"
+     * with delivery fields null).
+     *
+     * @param string $messageId The unique message identifier (ULID)
+     *
+     * @return array The message record
+     *
+     * @throws AuthenticationException When the API returns 401 Unauthorized
+     * @throws ApiException            When the message is not found (404) or another error occurs
+     */
+    public function find(string $messageId): array
+    {
+        return $this->request('GET', "api/v1/messages/{$messageId}");
     }
 }
