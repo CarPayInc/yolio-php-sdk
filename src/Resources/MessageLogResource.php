@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yolio\Sdk\Resources;
 
+use Yolio\Sdk\Dto\MessageLog;
+use Yolio\Sdk\Dto\Paginated;
 use Yolio\Sdk\Exceptions\ApiException;
 use Yolio\Sdk\Exceptions\AuthenticationException;
 
@@ -27,16 +29,18 @@ class MessageLogResource extends BaseResource
      *                      - end_date (string): Upper bound of the created_at window — a bare date is inclusive of the whole day
      *                      - per_page (int): Number of results per page
      *
-     * @return array Paginated list of message log entries
+     * @return Paginated Paginated list of MessageLog DTOs
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ApiException            When the API returns an error
      */
-    public function list(array $params = []): array
+    public function list(array $params = []): Paginated
     {
-        return $this->request('GET', 'api/v1/messages', [
+        $response = $this->request('GET', 'api/v1/messages', [
             'query' => $params,
         ]);
+
+        return Paginated::fromArray($response, [MessageLog::class, 'make']);
     }
 
     /**
@@ -51,16 +55,18 @@ class MessageLogResource extends BaseResource
      *                       - end_date (string): Upper bound of the created_at window — a bare date is inclusive of the whole day
      *                       - per_page (int): Number of results per page
      *
-     * @return array Paginated list of messages sent to the recipient
+     * @return Paginated Paginated list of MessageLog DTOs sent to the recipient
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ApiException            When the API returns an error
      */
-    public function recipientHistory(string $ref, array $params = []): array
+    public function recipientHistory(string $ref, array $params = []): Paginated
     {
-        return $this->request('GET', "api/v1/messages/recipient/{$ref}", [
+        $response = $this->request('GET', "api/v1/messages/recipient/{$ref}", [
             'query' => $params,
         ]);
+
+        return Paginated::fromArray($response, [MessageLog::class, 'make']);
     }
 
     /**
@@ -73,13 +79,13 @@ class MessageLogResource extends BaseResource
      *
      * @param string $messageId The unique message identifier (ULID)
      *
-     * @return array The message record
+     * @return MessageLog The message record (or its queued representation)
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ApiException            When the message is not found (404) or another error occurs
      */
-    public function find(string $messageId): array
+    public function find(string $messageId): MessageLog
     {
-        return $this->request('GET', "api/v1/messages/{$messageId}");
+        return MessageLog::make($this->request('GET', "api/v1/messages/{$messageId}"));
     }
 }

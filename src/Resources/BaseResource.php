@@ -7,6 +7,7 @@ namespace Yolio\Sdk\Resources;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use Yolio\Sdk\Dto\RequestObject;
 use Yolio\Sdk\Exceptions\ApiException;
 use Yolio\Sdk\Exceptions\AuthenticationException;
 use Yolio\Sdk\Exceptions\ValidationException;
@@ -30,6 +31,18 @@ abstract class BaseResource
     public function __construct(ClientInterface $client)
     {
         $this->client = $client;
+    }
+
+    /**
+     * Normalize a request payload that may be an array or a request object.
+     *
+     * @param array|RequestObject $payload The payload as a snake_case array or a RequestObject
+     *
+     * @return array<string, mixed> The wire-format array
+     */
+    protected function toPayload($payload): array
+    {
+        return $payload instanceof RequestObject ? $payload->toArray() : $payload;
     }
 
     /**

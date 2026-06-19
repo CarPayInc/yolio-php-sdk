@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Yolio\Sdk\Resources;
 
+use Yolio\Sdk\Dto\Paginated;
+use Yolio\Sdk\Dto\PartialRequest;
+use Yolio\Sdk\Dto\TemplatePartial;
 use Yolio\Sdk\Exceptions\ApiException;
 use Yolio\Sdk\Exceptions\AuthenticationException;
 use Yolio\Sdk\Exceptions\ValidationException;
@@ -23,38 +26,40 @@ class PartialResource extends BaseResource
      *                      - page (int): Page number
      *                      - per_page (int): Results per page
      *
-     * @return array Paginated list of template partials
+     * @return Paginated Paginated list of TemplatePartial DTOs
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ApiException            When the API returns an error
      */
-    public function list(array $params = []): array
+    public function list(array $params = []): Paginated
     {
-        return $this->request('GET', 'api/v1/partials', [
+        $response = $this->request('GET', 'api/v1/partials', [
             'query' => $params,
         ]);
+
+        return Paginated::fromArray($response, [TemplatePartial::class, 'make']);
     }
 
     /**
      * Create a new template partial.
      *
-     * @param array $data Partial data including:
+     * @param array|PartialRequest $data Partial data (array or PartialRequest) including:
      *                    - key (string): Unique partial key within the tenant
      *                    - body (string): Partial body content
      *                    - description (string): Optional description
      *                    - is_active (bool): Whether the partial is active
      *
-     * @return array The created partial data
+     * @return TemplatePartial The created partial
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ValidationException     When the API returns 422 with validation errors
      * @throws ApiException            When the API returns an error
      */
-    public function create(array $data): array
+    public function create($data): TemplatePartial
     {
-        return $this->request('POST', 'api/v1/partials', [
-            'json' => $data,
-        ]);
+        return TemplatePartial::make($this->request('POST', 'api/v1/partials', [
+            'json' => $this->toPayload($data),
+        ]));
     }
 
     /**
@@ -62,33 +67,33 @@ class PartialResource extends BaseResource
      *
      * @param int $id The partial ID
      *
-     * @return array The partial data
+     * @return TemplatePartial The partial
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ApiException            When the API returns an error (e.g. 404 Not Found)
      */
-    public function get(int $id): array
+    public function get(int $id): TemplatePartial
     {
-        return $this->request('GET', "api/v1/partials/{$id}");
+        return TemplatePartial::make($this->request('GET', "api/v1/partials/{$id}"));
     }
 
     /**
      * Update an existing template partial.
      *
-     * @param int   $id   The partial ID
-     * @param array $data Partial fields to update (partial updates supported)
+     * @param int                  $id   The partial ID
+     * @param array|PartialRequest $data Partial fields to update (partial updates supported)
      *
-     * @return array The updated partial data
+     * @return TemplatePartial The updated partial
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ValidationException     When the API returns 422 with validation errors
      * @throws ApiException            When the API returns an error
      */
-    public function update(int $id, array $data): array
+    public function update(int $id, $data): TemplatePartial
     {
-        return $this->request('PUT', "api/v1/partials/{$id}", [
-            'json' => $data,
-        ]);
+        return TemplatePartial::make($this->request('PUT', "api/v1/partials/{$id}", [
+            'json' => $this->toPayload($data),
+        ]));
     }
 
     /**

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Yolio\Sdk\Resources;
 
+use Yolio\Sdk\Dto\Paginated;
+use Yolio\Sdk\Dto\Template;
+use Yolio\Sdk\Dto\TemplateRequest;
 use Yolio\Sdk\Exceptions\ApiException;
 use Yolio\Sdk\Exceptions\AuthenticationException;
 use Yolio\Sdk\Exceptions\ValidationException;
@@ -24,40 +27,42 @@ class TemplateResource extends BaseResource
      *                          - channel (string): Filter by channel (email, sms, push, call)
      *                          - locale (string): Filter by locale (en, es)
      *
-     * @return array Paginated list of templates for the campaign
+     * @return Paginated Paginated list of Template DTOs
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ApiException            When the API returns an error
      */
-    public function listForCampaign(int $campaignId, array $params = []): array
+    public function listForCampaign(int $campaignId, array $params = []): Paginated
     {
-        return $this->request('GET', "api/v1/campaigns/{$campaignId}/templates", [
+        $response = $this->request('GET', "api/v1/campaigns/{$campaignId}/templates", [
             'query' => $params,
         ]);
+
+        return Paginated::fromArray($response, [Template::class, 'make']);
     }
 
     /**
      * Create a new template for a campaign.
      *
-     * @param int   $campaignId The campaign ID to create the template under
-     * @param array $data       Template data including:
+     * @param int                   $campaignId The campaign ID to create the template under
+     * @param array|TemplateRequest $data       Template data (array or TemplateRequest) including:
      *                          - key (string): Unique template key within the campaign
      *                          - channel (string): The channel (email, sms, push, call)
      *                          - locale (string): The locale code (en, es)
      *                          - subject (string): Email subject line (email channel only)
      *                          - body (string): Template body content
      *
-     * @return array The created template data
+     * @return Template The created template
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ValidationException     When the API returns 422 with validation errors
      * @throws ApiException            When the API returns an error
      */
-    public function create(int $campaignId, array $data): array
+    public function create(int $campaignId, $data): Template
     {
-        return $this->request('POST', "api/v1/campaigns/{$campaignId}/templates", [
-            'json' => $data,
-        ]);
+        return Template::make($this->request('POST', "api/v1/campaigns/{$campaignId}/templates", [
+            'json' => $this->toPayload($data),
+        ]));
     }
 
     /**
@@ -65,33 +70,33 @@ class TemplateResource extends BaseResource
      *
      * @param int $id The template ID
      *
-     * @return array The template data
+     * @return Template The template
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ApiException            When the API returns an error (e.g. 404 Not Found)
      */
-    public function get(int $id): array
+    public function get(int $id): Template
     {
-        return $this->request('GET', "api/v1/templates/{$id}");
+        return Template::make($this->request('GET', "api/v1/templates/{$id}"));
     }
 
     /**
      * Update an existing template.
      *
-     * @param int   $id   The template ID
-     * @param array $data Template fields to update (partial updates supported)
+     * @param int                   $id   The template ID
+     * @param array|TemplateRequest $data Template fields to update (partial updates supported)
      *
-     * @return array The updated template data
+     * @return Template The updated template
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ValidationException     When the API returns 422 with validation errors
      * @throws ApiException            When the API returns an error
      */
-    public function update(int $id, array $data): array
+    public function update(int $id, $data): Template
     {
-        return $this->request('PUT', "api/v1/templates/{$id}", [
-            'json' => $data,
-        ]);
+        return Template::make($this->request('PUT', "api/v1/templates/{$id}", [
+            'json' => $this->toPayload($data),
+        ]));
     }
 
     /**

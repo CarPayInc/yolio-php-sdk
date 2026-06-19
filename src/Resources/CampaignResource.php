@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Yolio\Sdk\Resources;
 
+use Yolio\Sdk\Dto\Campaign;
+use Yolio\Sdk\Dto\CampaignRequest;
+use Yolio\Sdk\Dto\Paginated;
 use Yolio\Sdk\Exceptions\ApiException;
 use Yolio\Sdk\Exceptions\AuthenticationException;
 use Yolio\Sdk\Exceptions\ValidationException;
@@ -23,22 +26,24 @@ class CampaignResource extends BaseResource
      *                      - active (bool): Filter by active status
      *                      - per_page (int): Number of results per page
      *
-     * @return array Paginated list of campaigns
+     * @return Paginated Paginated list of Campaign DTOs
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ApiException            When the API returns an error
      */
-    public function list(array $params = []): array
+    public function list(array $params = []): Paginated
     {
-        return $this->request('GET', 'api/v1/campaigns', [
+        $response = $this->request('GET', 'api/v1/campaigns', [
             'query' => $params,
         ]);
+
+        return Paginated::fromArray($response, [Campaign::class, 'make']);
     }
 
     /**
      * Create a new campaign.
      *
-     * @param array $data Campaign data including:
+     * @param array|CampaignRequest $data Campaign data (array or CampaignRequest) including:
      *                    - key (string): Unique campaign key within the tenant
      *                    - name (string): Human-readable campaign name
      *                    - description (string): Campaign description
@@ -46,17 +51,17 @@ class CampaignResource extends BaseResource
      *                    - category (string): "informational", "operational", or "promotional"
      *                    - channels (array): Enabled channels (e.g. ["email", "sms"])
      *
-     * @return array The created campaign data
+     * @return Campaign The created campaign
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ValidationException     When the API returns 422 with validation errors
      * @throws ApiException            When the API returns an error
      */
-    public function create(array $data): array
+    public function create($data): Campaign
     {
-        return $this->request('POST', 'api/v1/campaigns', [
-            'json' => $data,
-        ]);
+        return Campaign::make($this->request('POST', 'api/v1/campaigns', [
+            'json' => $this->toPayload($data),
+        ]));
     }
 
     /**
@@ -64,33 +69,33 @@ class CampaignResource extends BaseResource
      *
      * @param int $id The campaign ID
      *
-     * @return array The campaign data including its templates
+     * @return Campaign The campaign including its templates
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ApiException            When the API returns an error (e.g. 404 Not Found)
      */
-    public function get(int $id): array
+    public function get(int $id): Campaign
     {
-        return $this->request('GET', "api/v1/campaigns/{$id}");
+        return Campaign::make($this->request('GET', "api/v1/campaigns/{$id}"));
     }
 
     /**
      * Update an existing campaign.
      *
-     * @param int   $id   The campaign ID
-     * @param array $data Campaign fields to update (partial updates supported)
+     * @param int                   $id   The campaign ID
+     * @param array|CampaignRequest $data Campaign fields to update (partial updates supported)
      *
-     * @return array The updated campaign data
+     * @return Campaign The updated campaign
      *
      * @throws AuthenticationException When the API returns 401 Unauthorized
      * @throws ValidationException     When the API returns 422 with validation errors
      * @throws ApiException            When the API returns an error
      */
-    public function update(int $id, array $data): array
+    public function update(int $id, $data): Campaign
     {
-        return $this->request('PUT', "api/v1/campaigns/{$id}", [
-            'json' => $data,
-        ]);
+        return Campaign::make($this->request('PUT', "api/v1/campaigns/{$id}", [
+            'json' => $this->toPayload($data),
+        ]));
     }
 
     /**
