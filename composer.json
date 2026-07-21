@@ -1,9 +1,28 @@
 {
     "name": "yolio/sdk",
     "description": "PHP SDK for the Yolio API",
-    "license": "proprietary",
-    "version": "1.0.0",
+    "license": "MIT",
     "type": "library",
+    "homepage": "https://github.com/CarPayInc/yolio-php-sdk",
+    "keywords": [
+        "yolio",
+        "sdk",
+        "messaging",
+        "email",
+        "sms",
+        "notifications",
+        "api-client"
+    ],
+    "authors": [
+        {
+            "name": "CarPay, Inc.",
+            "homepage": "https://github.com/CarPayInc"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/CarPayInc/yolio-php-sdk/issues",
+        "source": "https://github.com/CarPayInc/yolio-php-sdk"
+    },
     "require": {
         "php": ">=7.4",
         "guzzlehttp/guzzle": "^7.0"
