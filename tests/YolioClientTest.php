@@ -17,6 +17,7 @@ use Yolio\Sdk\Resources\CampaignResource;
 use Yolio\Sdk\Resources\EmailSubscriptions;
 use Yolio\Sdk\Resources\MessageLogResource;
 use Yolio\Sdk\Resources\MessageResource;
+use Yolio\Sdk\Resources\SmsResource;
 use Yolio\Sdk\Resources\TemplateResource;
 use PHPUnit\Framework\TestCase;
 
@@ -856,5 +857,59 @@ class YolioClientTest extends TestCase
         $this->assertInstanceOf(MessageResource::class, $client->messages());
         $this->assertInstanceOf(MessageLogResource::class, $client->messageLog());
         $this->assertInstanceOf(EmailSubscriptions::class, $client->emailSubscriptions());
+        $this->assertInstanceOf(SmsResource::class, $client->sms());
+    }
+
+    /**
+     * Create an SmsResource with a mocked Guzzle client.
+     *
+     * @param MockHandler $mock The mock handler pre-loaded with responses
+     *
+     * @return SmsResource
+     */
+    private function createSmsResource(MockHandler $mock): SmsResource
+    {
+        $handlerStack = HandlerStack::create($mock);
+        $client       = new Client([
+            'handler'  => $handlerStack,
+            'base_uri' => 'https://hub.example.com/',
+            'headers'  => [
+                'Authorization' => 'Bearer test-api-key',
+                'Accept'        => 'application/json',
+                'Content-Type'  => 'application/json',
+            ],
+        ]);
+
+        return new SmsResource($client);
+    }
+
+    /**
+     * Test that relayedNumbers returns the list of E.164 numbers from the response.
+     *
+     * @return void
+     */
+    public function testRelayedNumbersReturnsList(): void
+    {
+        $mock = new MockHandler([
+            new Response(200, [], json_encode(['numbers' => ['+15550001111', '+15550002222']])),
+        ]);
+
+        $numbers = $this->createSmsResource($mock)->relayedNumbers();
+
+        $this->assertSame(['+15550001111', '+15550002222'], $numbers);
+    }
+
+    /**
+     * Test that relayedNumbers returns an empty array when the key is absent.
+     *
+     * @return void
+     */
+    public function testRelayedNumbersDefaultsToEmptyArray(): void
+    {
+        $mock = new MockHandler([
+            new Response(200, [], json_encode([])),
+        ]);
+
+        $this->assertSame([], $this->createSmsResource($mock)->relayedNumbers());
     }
 }

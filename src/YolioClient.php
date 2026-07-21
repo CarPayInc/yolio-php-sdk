@@ -11,6 +11,7 @@ use Yolio\Sdk\Resources\EmailSubscriptions;
 use Yolio\Sdk\Resources\MessageLogResource;
 use Yolio\Sdk\Resources\MessageResource;
 use Yolio\Sdk\Resources\PartialResource;
+use Yolio\Sdk\Resources\SmsResource;
 use Yolio\Sdk\Resources\TemplateResource;
 
 /**
@@ -48,6 +49,9 @@ class YolioClient
 
     /** @var EmailSubscriptions|null Lazily instantiated email subscriptions resource */
     private ?EmailSubscriptions $emailSubscriptionsResource = null;
+
+    /** @var SmsResource|null Lazily instantiated SMS resource */
+    private ?SmsResource $smsResource = null;
 
     /**
      * Create a new Yolio client.
@@ -162,5 +166,19 @@ class YolioClient
         }
 
         return $this->emailSubscriptionsResource;
+    }
+
+    /**
+     * Get the SMS resource for relay reconciliation helpers.
+     *
+     * @return SmsResource
+     */
+    public function sms(): SmsResource
+    {
+        if ($this->smsResource === null) {
+            $this->smsResource = new SmsResource($this->httpClient);
+        }
+
+        return $this->smsResource;
     }
 }
